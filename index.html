@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TDM Indication Calculator</title>
+  <!-- Tailwind CSS & Inter Font -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f7f9fb;
+    }
+    /* Custom Tailwind config for the toggle switch */
+    .toggle-switch {
+      transition: all 0.2s ease-in-out;
+    }
+    .toggle-switch:checked {
+      @apply bg-green-500;
+    }
+    .toggle-switch:checked + .slider {
+      transform: translateX(100%);
+    }
+    .slider {
+      transition: transform 0.2s ease-in-out;
+    }
+    .input-field {
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        text-align: right;
+        font-weight: 700;
+        color: #1e3a8a; /* Indigo-800 */
+        transition: border-color 0.2s;
+    }
+    .input-group label {
+        font-weight: 600;
+        color: #4b5563; /* Gray-600 */
+    }
+    .toggle-switch-label {
+        background-color: #e5e7eb; /* bg-gray-200 for unchecked state */
+    }
+    .toggle-switch-input:checked + .toggle-switch-label {
+        background-color: #10b981; /* bg-green-500 for checked state */
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+  <div id="app" class="max-w-md mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <!-- Header -->
+    <header class="p-6 bg-indigo-700 text-white">
+      <h1 class="text-2xl font-extrabold text-center">Epilepsy EZ Check</h1>
+      <p class="text-sm text-center mt-1 opacity-80">
+        TDM Indication Score Calculator
+      </p>
+    </header>
+
+    <!-- Prerequisite Alert -->
+    <div class="p-4 bg-red-50 text-red-800 border-b border-red-200">
+      <p class="font-bold text-sm">Prerequisite:</p>
+      <p class="text-xs italic">
+        Patient has had **breakthrough seizures** in the past six months.
+      </p>
+    </div>
+
+    <!-- Inputs & Toggles Section -->
+    <main class="p-6 space-y-6">
+      <!-- 1. Demographic Inputs & BMI Calculation -->
+      <h2 class="text-lg font-bold text-indigo-700 border-b pb-2 mb-4">Demographics & Calculated BMI</h2>
+
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Age Input -->
+        <div class="input-group">
+          <label for="input-age" class="block text-sm">Age (Years)</label>
+          <div class="flex items-center mt-1 bg-gray-100 rounded-lg shadow-inner">
+            <input
+              type="number"
+              id="input-age"
+              min="0"
+              max="150"
+              step="1"
+              placeholder="e.g. 35"
+              class="input-field w-full bg-transparent"
+              oninput="calculateScore()"
+            />
+            <span class="mr-3 text-gray-500 font-medium text-sm">yr</span>
+          </div>
+        </div>
+
+        <!-- Weight Input -->
+        <div class="input-group">
+          <label for="input-weight" class="block text-sm">Weight (kg)</label>
+          <div class="flex items-center mt-1 bg-gray-100 rounded-lg shadow-inner">
+            <input
+              type="number"
+              id="input-weight"
+              min="1"
+              step="0.1"
+              placeholder="e.g. 70.0"
+              class="input-field w-full bg-transparent"
+              oninput="calculateScore()"
+            />
+            <span class="mr-3 text-gray-500 font-medium text-sm">kg</span>
+          </div>
+        </div>
+        
+        <!-- Height Input -->
+        <div class="input-group">
+          <label for="input-height" class="block text-sm">Height (m)</label>
+          <div class="flex items-center mt-1 bg-gray-100 rounded-lg shadow-inner">
+            <input
+              type="number"
+              id="input-height"
+              min="0.1"
+              step="0.01"
+              placeholder="e.g. 1.75"
+              class="input-field w-full bg-transparent"
+              oninput="calculateScore()"
+            />
