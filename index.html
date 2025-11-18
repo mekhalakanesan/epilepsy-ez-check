@@ -52,8 +52,7 @@
     <header class="p-6 bg-indigo-700 text-white">
       <h1 class="text-2xl font-extrabold text-center">Epilepsy EZ Check</h1>
       <p class="text-sm text-center mt-1 opacity-80">
-        TDM Indication Score Calculator 
-                  JKWPKL&P
+        TDM Indication Score Calculator
       </p>
     </header>
 
@@ -68,7 +67,7 @@
     <!-- Inputs & Toggles Section -->
     <main class="p-6 space-y-6">
       <!-- 1. Demographic Inputs & BMI Calculation -->
-      <h2 class="text-lg font-bold text-indigo-700 border-b pb-2 mb-4">Demographics & Calculated BMI</h2>
+      <h2 class="text-lg font-bold text-indigo-700 border-b pb-2 mb-4">1. Demographic & Calculated BMI (Max 1 Point)</h2>
 
       <div class="grid grid-cols-2 gap-4">
         <!-- Age Input -->
@@ -152,7 +151,7 @@
         </div>
       </div>
       
-      <!-- 3. Special Population -->
+      <!-- 3. Special Population (Additive Scoring) -->
       <h2 class="text-lg font-bold text-indigo-700 border-b pb-2 pt-4 mb-4">3. Special Population (1 Point Each)</h2>
       <div id="special-population-check" class="space-y-3">
         
@@ -211,6 +210,8 @@
         <p class="font-bold text-lg">TDM Indication Status</p>
         <p id="indication-text" class="text-xl font-extrabold mt-1">NO INDICATION</p>
       </div>
+      <!-- COPYRIGHT ADDED -->
+      <p class="text-xs text-gray-500 mt-4 text-center">&copy; JKWPKL 2025</p>
     </footer>
   </div>
 
@@ -220,7 +221,7 @@
       { id: '2', text: 'Seizure occurs during sleep' },
       { id: '3', text: 'Any drug/dose changes (ASM only)' },
       { id: '4', text: 'Suspected subtherapeutic dose' },
-      { id: '5', text: 'Suspected adverse effect or toxicity' },
+      { id: '5', text: 'Suspected adverse effect / toxicity' },
       { id: '6a', text: 'Changes in medication (Brand / Formulation)' },
       { id: '7', text: 'Poor compliance suspected' },
       { id: '8', text: 'Any suspected interaction' },
@@ -320,9 +321,9 @@
       // Calculate and get BMI
       const calculatedBMI = getCalculatedBMI();
       
-      // --- 1. BMI-Related (1g: Obese, 1h: Low BMI) ---
+      // --- 1. BMI-Related (Obese / Low BMI) ---
       let bmiStatus = '';
-      let bmiScore = 0; // Use a temporary variable for BMI score
+      let bmiScore = 0; 
       
       // Obese (BMI ≥ 27.5 kg/m²) - 1 point
       if (calculatedBMI >= 27.5) { 
@@ -344,44 +345,39 @@
       if (document.getElementById('check-renal')?.checked) score++;
       if (document.getElementById('check-liver')?.checked) score++;
 
-      // --- 3. Special Population (Child, Geriatric, Pregnant, Post-Surgery) - MAX 1 point ---
+      // --- 3. Special Population (Child, Geriatric, Pregnant, Post-Surgery) - ADDITIVE SCORING ---
       const age = parseFloat(inputAge.value);
       const isChild = age > 0 && age < 20;
       const isGeriatric = age >= 65;
       const isPregnant = document.getElementById('check-pregnancy')?.checked;
       const isPostSurgery = document.getElementById('check-surgery')?.checked;
 
+      // Helper function for updating status box appearance
+      const updateStatusBox = (el, statusEl, isMet) => {
+          if (isMet) {
+              el.classList.remove('border-gray-200');
+              el.classList.add('border-green-400', 'bg-green-50');
+              statusEl.classList.replace('text-red-500', 'text-green-600');
+              statusEl.textContent = 'MET';
+          } else {
+              el.classList.add('border-gray-200');
+              el.classList.remove('border-green-400', 'bg-green-50');
+              statusEl.classList.replace('text-green-600', 'text-red-500');
+              statusEl.textContent = 'NOT MET';
+          }
+      };
+
       // Update Child Status Display
-      if (isChild) {
-          ageChildPopBox.classList.remove('border-gray-200');
-          ageChildPopBox.classList.add('border-green-400', 'bg-green-50');
-          ageChildPopStatusEl.classList.replace('text-red-500', 'text-green-600');
-          ageChildPopStatusEl.textContent = 'MET';
-      } else {
-          ageChildPopBox.classList.add('border-gray-200');
-          ageChildPopBox.classList.remove('border-green-400', 'bg-green-50');
-          ageChildPopStatusEl.classList.replace('text-green-600', 'text-red-500');
-          ageChildPopStatusEl.textContent = 'NOT MET';
-      }
+      updateStatusBox(ageChildPopBox, ageChildPopStatusEl, isChild);
       
       // Update Geriatric Status Display
-      if (isGeriatric) {
-          ageGeriatricPopBox.classList.remove('border-gray-200');
-          ageGeriatricPopBox.classList.add('border-green-400', 'bg-green-50');
-          ageGeriatricPopStatusEl.classList.replace('text-red-500', 'text-green-600');
-          ageGeriatricPopStatusEl.textContent = 'MET';
-      } else {
-          ageGeriatricPopBox.classList.add('border-gray-200');
-          ageGeriatricPopBox.classList.remove('border-green-400', 'bg-green-50');
-          ageGeriatricPopStatusEl.classList.replace('text-green-600', 'text-red-500');
-          ageGeriatricPopStatusEl.textContent = 'NOT MET';
-      }
+      updateStatusBox(ageGeriatricPopBox, ageGeriatricPopStatusEl, isGeriatric);
 
-
-      // Scoring: If ANY of the four conditions are met, score 1 point (Max 1).
-      if (isChild || isGeriatric || isPregnant || isPostSurgery) {
-          score++;
-      }
+      // SCORING CHANGE: 1 point for EACH met condition.
+      if (isChild) score++;
+      if (isGeriatric) score++;
+      if (isPregnant) score++;
+      if (isPostSurgery) score++;
 
       // --- 4. Clinical Factors (1 point each) ---
       CRITERIA_TOGGLES.forEach(item => {
@@ -433,5 +429,3 @@
   </script>
 </body>
 </html>
-
-
